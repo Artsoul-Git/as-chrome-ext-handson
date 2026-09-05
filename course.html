@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="robots" content="noindex,nofollow">
+<title>実践Claude Code！ワンクリックで仕事が片付くChrome拡張機能を作ろう！｜有限会社アートソウル</title>
+<style>
+:root{
+  --acc:#FF0000; --acc-dark:#C40000; --tint:#FFF0F0;
+  --ink:#111111; --sub:#444444; --mute:#767680;
+  --lt:#F4F4F4; --line:#E4E4E4; --paper:#FFFFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Noto Sans JP","Yu Gothic","Hiragino Sans",system-ui,sans-serif;
+  color:var(--ink);background:var(--paper);line-height:1.9;font-size:16px}
+.wrap{max-width:860px;margin:0 auto;padding:0 6vw}
+
+header{background:var(--acc);color:#fff;padding:52px 6vw 44px}
+header .in{max-width:860px;margin:0 auto}
+.kicker{display:inline-block;border:2px solid rgba(255,255,255,.55);border-radius:999px;
+  padding:5px 16px;font-size:13px;letter-spacing:.1em;margin-bottom:18px}
+header h1{font-size:clamp(24px,4.4vw,40px);font-weight:900;line-height:1.32}
+header .sub{margin-top:16px;font-size:clamp(15px,2vw,18px);color:rgba(255,255,255,.95)}
+header .meta{margin-top:24px;display:flex;flex-wrap:wrap;gap:10px}
+header .meta span{background:rgba(0,0,0,.16);border-radius:8px;padding:7px 14px;font-size:14px}
+
+h2{font-size:clamp(20px,2.8vw,26px);font-weight:900;margin:46px 0 14px;
+  padding-left:14px;border-left:7px solid var(--acc);line-height:1.45}
+p{margin:0 0 14px;color:var(--sub)}
+strong{color:var(--ink);font-weight:700}
+.acc{color:var(--acc);font-weight:700}
+
+.lead{background:var(--lt);border-radius:14px;padding:24px 26px;margin:32px 0}
+.lead p:last-child{margin-bottom:0}
+.quote{background:#fff;border:2px solid var(--acc);border-radius:12px;padding:18px 22px;margin:18px 0}
+.quote p{margin:0;color:var(--ink);font-size:17px;line-height:1.85}
+.note{background:var(--lt);border-left:6px solid var(--mute);border-radius:0 10px 10px 0;
+  padding:15px 18px;margin:18px 0;font-size:15px;color:var(--sub)}
+.warn{background:var(--tint);border:1px solid #F3B8B3;border-radius:12px;padding:16px 19px;margin:18px 0;font-size:15.5px}
+.warn b{color:var(--acc)}
+
+table{border-collapse:collapse;width:100%;margin:16px 0;font-size:15.5px}
+th,td{border:1px solid var(--line);padding:11px 13px;text-align:left;vertical-align:top;line-height:1.8}
+th{background:var(--lt);font-weight:700;white-space:nowrap}
+@media(max-width:600px){th,td{padding:9px 10px;font-size:14px}th{white-space:normal}}
+
+ul{margin:10px 0 16px;padding-left:22px}
+li{margin-bottom:7px;color:var(--sub)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0}
+.card{border:2px solid var(--line);border-radius:14px;padding:18px}
+.card .ic{font-size:26px}
+.card h4{font-size:17px;font-weight:800;margin:6px 0}
+.card p{font-size:14.5px;margin:0}
+
+.flow{counter-reset:f;list-style:none;padding:0;margin:16px 0}
+.flow li{counter-increment:f;position:relative;padding:14px 0 14px 52px;border-bottom:1px solid var(--lt);
+  color:var(--sub);font-size:15.5px;margin:0}
+.flow li:last-child{border-bottom:0}
+.flow li::before{content:counter(f);position:absolute;left:0;top:15px;width:32px;height:32px;
+  background:var(--ink);color:#fff;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:14px;font-weight:700}
+.flow b{color:var(--ink)}
+.flow .t{display:inline-block;background:var(--lt);border-radius:6px;padding:1px 9px;
+  font-size:13px;color:var(--mute);margin-left:8px}
+
+details{border:1px solid var(--line);border-radius:10px;margin:10px 0;overflow:hidden}
+details summary{cursor:pointer;padding:13px 16px;background:var(--lt);font-weight:700;font-size:16px;list-style:none}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"\25B8 ";color:var(--acc);font-weight:900}
+details[open] summary::before{content:"\25BE "}
+details .db{padding:14px 18px;font-size:15.5px;color:var(--sub)}
+details .db p:last-child{margin-bottom:0}
+
+.cta{background:var(--ink);color:#fff;border-radius:16px;padding:34px 30px;margin:44px 0 20px;text-align:center}
+.cta h2{border:0;padding:0;margin:0 0 12px;color:#fff;font-size:clamp(20px,3vw,27px)}
+.cta p{color:rgba(255,255,255,.9);margin-bottom:20px}
+.cta a{display:inline-block;background:var(--acc);color:#fff;text-decoration:none;
+  border-radius:11px;padding:16px 34px;font-weight:800;font-size:17px}
+.cta a:hover{background:var(--acc-dark)}
+.cta .small{font-size:13.5px;color:rgba(255,255,255,.72);margin:16px 0 0}
+
+footer{border-top:2px solid var(--ink);margin-top:48px;padding:22px 0 60px;font-size:14.5px;color:var(--sub)}
+footer .co{font-weight:800;font-size:16px;color:var(--ink)}
+.totop{position:fixed;right:18px;bottom:18px;background:var(--acc);color:#fff;border:0;
+  border-radius:50%;width:50px;height:50px;font-size:19px;cursor:pointer;
+  box-shadow:0 4px 14px rgba(0,0,0,.24);display:none}
+.totop.on{display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="in">
+    <div class="kicker">大人のAI自由研究</div>
+    <h1>実践Claude Code！<br>ワンクリックで仕事が片付く<br>Chrome拡張機能を作ろう！</h1>
+    <p class="sub">「こんな機能欲しかった」を、その場で形にする。<br>
+      プログラムは書きません。AIに指示を出して作ります。</p>
+    <div class="meta">
+      <span>本編 3時間</span>
+      <span>オプション回 1時間（後日）</span>
+      <span>定員 8〜15名</span>
+      <span>対面 / オンライン</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="lead">
+    <p><strong>ブラウザの右上に並んでいる、あの小さいボタン。</strong>あれを自分で作ります。</p>
+    <p>作るのは、あなたが「これ毎回めんどくさいな」と思っている作業を片付ける道具です。
+      3時間で、<strong>自分のブラウザで実際に動くところまで</strong>持っていきます。</p>
+    <p style="margin-bottom:0">そして——ここがこの講座のもう半分ですが——
+      <strong class="acc">作ったものを、会社で使えるようにするところまで扱います。</strong></p>
+  </div>
+
+  <h2>作れる人は増えました。でも、社内で止まっています。</h2>
+
+  <p>AIに頼めば、道具は作れるようになりました。<strong>問題はそのあとです。</strong></p>
+  <p>「作ってはみたけれど、会社で使っていいか分からないので、自分の中だけで使っている」——
+    こういうことが、いま多くの職場で起きていると思います。</p>
+
+  <p>情報システムの担当者が止める理由は、たいていこう言い換えられます。</p>
+  <div class="quote">
+    <p><strong>「危ないと思っているわけではない。<br>
+      危ないかどうかを、こちらで判断する材料が無い。」</strong></p>
+  </div>
+  <p>つまり、止めているのは<strong>技術の問題ではなく、説明の問題</strong>です。
+    そして現場の側に、<strong>何を説明すればいいのかを教わる機会がありません。</strong></p>
+
+  <h2>この講座が扱う範囲</h2>
+
+  <table>
+    <tr><th style="width:9em">本編<br>3時間</th>
+      <td><strong>ブラウザに入れて実際に動く道具を、ご自分で1つ作ります。</strong><br>
+        プログラムは書きません。AIに指示を出して作ります。題材は3つから選べます。</td></tr>
+    <tr><th>オプション回<br>1時間（後日）</th>
+      <td><strong>作ったものを、社内に提出できる形にします。</strong><br>
+        この講座では、情報システムから<strong>聞かれやすいことを10問</strong>にまとめてあります。
+        そのうち<strong>差し戻されやすい3問</strong>に答えられる書類を書きます。</td></tr>
+  </table>
+
+  <p><strong>「作る」講座は世の中にたくさんあります。この講座は、そのあとを扱います。</strong></p>
+
+  <div class="note">
+    <strong>★ 2つセットでお受けいただくことをおすすめしています。</strong><br>
+    「作れる」だけを先に持ち帰ると、<strong>使えない道具が手元に溜まります。</strong>
+    本編だけのお申し込みもお受けしますが、既定は2つセットです。
+  </div>
+
+  <h2>題材は、3つから選べます</h2>
+
+  <div class="cards">
+    <div class="card"><div class="ic">🎨</div>
+      <h4>カラーピッカー</h4>
+      <p>画像から色を吸い出して、色コードをコピーする。デザイン・資料作りをする方に。</p></div>
+    <div class="card"><div class="ic">📝</div>
+      <h4>テキスト差分チェッカー</h4>
+      <p>2つの文章の違いを並べて表示する。契約書・原稿を突き合わせる方に。</p></div>
+    <div class="card"><div class="ic">📄</div>
+      <h4>画像→PDFメーカー</h4>
+      <p>画像をまとめてPDFにする。書類をまとめて出す方に。</p></div>
+  </div>
+
+  <p>どれも同じ手順で作れて、所要時間もほぼ同じです。<strong>当日、その場で選んでいただきます。</strong></p>
+
+  <h2>当日の流れ（本編・3時間）</h2>
+
+  <ol class="flow">
+    <li><b>はじめの準備</b><span class="t">20分・スキップ可</span><br>
+      Claude Code をまだ入れていない方を、ここで立ち上げます。
+      済んでいる方には、このあと必ず使うワークをお渡しします。<strong>待つだけの時間は作りません。</strong></li>
+    <li><b>拡張機能を知る・場所を作る</b><span class="t">30分</span><br>
+      拡張機能とは何か、実物を見ます。作業フォルダを用意して、AIに挨拶させます。</li>
+    <li><b>作る</b><span class="t">45分</span><br>
+      3つから題材を選んで、AIに作らせます。<strong>ご自分のブラウザに入れて、実際に動かします。</strong></li>
+    <li><b>自分仕様に変える</b><span class="t">35分</span><br>
+      色、文字の大きさ、ボタンの位置。「効く言い方」の型を12パターンお渡しします。<br>
+      早く終わった方は、自分の業務課題から<strong>もう1本</strong>作ります。</li>
+    <li><b>質疑応答</b><span class="t">10分</span></li>
+  </ol>
+
+  <div class="note">
+    <strong>★ 途中で終わらなくても大丈夫です。</strong>
+    お渡しする資料は、<strong>ご自宅で1人で最後まで進められる密度</strong>にしてあります。
+    当日詰まった方には、完成したサンプルもお渡しします。<strong>手ぶらでは帰しません。</strong>
+  </div>
+
+  <h2>持ち帰っていただくもの</h2>
+
+  <ul>
+    <li><strong>動く道具が1つ</strong>（ご自分のブラウザに入った状態）</li>
+    <li><strong>作り方の手順一式</strong>（同じやり方で、2つ目・3つ目が作れます）</li>
+    <li><strong>言い方の型 12パターン</strong>（「いい感じにして」は効きません。効く言い方をお渡しします）</li>
+    <li><strong>情報システムに聞かれる10問と、その答え方</strong>（オプション回）</li>
+    <li><strong>提出書類の見本 9点</strong>（オプション回。実物のコードから起こしたものです）</li>
+  </ul>
+
+  <h2>対象・ご準備</h2>
+
+  <table>
+    <tr><th style="width:8em">対象</th>
+      <td>パソコンは少し触れる／AIも少し触れる、という方。<strong>プログラムの経験は要りません。</strong><br>
+        <span style="color:var(--mute)">40〜60代の方を想定して作っています。難しい用語は使いません。</span></td></tr>
+    <tr><th>ご準備</th>
+      <td>ノートパソコン（<strong>★ソフトをインストールできる権限のあるもの</strong>）／Google Chrome ／
+        AIの契約（Claude の有料プラン）<br>
+        <span style="color:var(--mute)">※契約や導入の手順は、お申し込み後に「はじめての導入ガイド」をお送りします</span></td></tr>
+    <tr><th>形式</th><td>対面 または オンライン（画面共有＋個別サポート）</td></tr>
+    <tr><th>定員</th><td>8〜15名</td></tr>
+    <tr><th>日程</th><td><strong>ご相談のうえ決定します。</strong>ご都合の良い時期をお知らせください</td></tr>
+  </table>
+
+  <div class="warn">
+    <b>会社のパソコンでご参加を検討されている方へ</b><br>
+    講座では、パソコンに<strong>ソフトを2つインストール</strong>します。また、
+    <strong>ご自身の業務内容をAIに入力していただく場面</strong>があります。<br>
+    会社支給のパソコンをお使いの場合、<strong>事前に社内のご承認をいただいてから</strong>お申し込みください。
+    お返事に数日かかることがあります。<strong>当日その場では解決できません。</strong>
+  </div>
+
+  <h2>よくあるご質問</h2>
+
+  <details><summary>プログラムが分からなくても本当に作れますか</summary><div class="db">
+    <p>作れます。コードは<strong>1行も書きません。</strong>AIに日本語で指示を出して作ります。</p>
+    <p>ただし、<strong>「いい感じにして」では動きません。</strong>効く言い方には型があります。
+      その型をお渡しするのが、この講座の中身のひとつです。</p>
+  </div></details>
+
+  <details><summary>作ったものを、会社で使えますか</summary><div class="db">
+    <p><strong>会社によります。</strong>審査の基準は会社ごとに違うので、
+      <span class="acc">「必ず通ります」とは申し上げられません。</span></p>
+    <p>申し上げられるのは、<strong>聞かれたことに、書いたもので答えられる状態になる</strong>——
+      というところまでです。オプション回で、その書類を書きます。</p>
+  </div></details>
+
+  <details><summary>オプション回だけ受けられますか</summary><div class="db">
+    <p><strong>本編を受けていただくことが前提です。</strong>オプション回は
+      「本編で作ったご自分の道具を、社内に通す」回なので、通す対象が必要です。</p>
+  </div></details>
+
+  <details><summary>当日、時間内に完成しなかったらどうなりますか</summary><div class="db">
+    <p><strong>資料だけでご自宅で完走できるように作ってあります。</strong>
+      当日詰まった方には、完成したサンプルもお渡しします。</p>
+    <p>「終わらなかった人」を作らないことを、設計の前提にしています。</p>
+  </div></details>
+
+  <details><summary>Claude の契約は、どのプランが必要ですか</summary><div class="db">
+    <p><strong>有料プランが必要です。</strong>無料プランには、今回使う機能が含まれていません。</p>
+    <p>お申し込みいただいた方に、<strong>契約から導入までの手順書</strong>（全7ステップ）をお送りします。
+      その通りに進めていただければ、20〜30分で準備が終わります。</p>
+  </div></details>
+
+  <h2>正直に、お伝えしておきます</h2>
+
+  <div class="quote">
+    <p><strong>今回が第1回です。</strong>まだ一度も開催していません。</p>
+  </div>
+
+  <p>ですので「受講された方の声」も「満足度の数字」も、このページには書けません。<strong>持っていないからです。</strong></p>
+  <p>そのかわり、第1回だからお願いできることがあります。<br>
+    <strong>うまくいかなかったところを、教えていただきたい。</strong>
+    率直なご意見をくださる方に来ていただけると、こちらとしても本当に助かります。</p>
+
+  <div class="note">
+    資料は、<strong>その日だけのものにしていません。</strong>
+    お帰りいただいたあと、ご自宅で最後まで進められる密度にしてあります。
+    <strong>それでも、実際に人が座ると必ず想定外が出ます。</strong>そこを一緒に見つけていただければ。
+  </div>
+
+  <div class="cta">
+    <h2>まずは30分、内容だけご説明します</h2>
+    <p>お申し込みの前に、オンラインで内容をご説明します。<br>
+      <strong>その場でお断りいただいて構いません。</strong></p>
+    <a href="mailto:uemura@artsoul.jp?subject=%E8%AC%9B%E5%BA%A7%E3%81%AE%E8%AA%AC%E6%98%8E%E5%B8%8C%E6%9C%9B">
+      「説明希望」とメールする</a>
+    <p class="small">ボタンを押すとメールが開きます。<strong>本文はそのままで構いません。</strong><br>
+      受講料・日程は、個別にご案内しております。</p>
+  </div>
+
+  <footer>
+    <p class="co">有限会社アートソウル</p>
+    <p style="margin:6px 0 0">中小企業の業務改善と、AIの導入支援をしています。<br>
+      代表 上村 桂右　／　uemura@artsoul.jp</p>
+  </footer>
+
+</div>
+
+<button class="totop" id="totop" title="上に戻る" aria-label="上に戻る">&#8593;</button>
+<script>
+(function(){
+  var b=document.getElementById('totop');
+  function paint(){ b.classList.toggle('on', (window.scrollY||document.documentElement.scrollTop)>420); }
+  addEventListener('scroll',paint); paint();
+  b.addEventListener('click',function(){ scrollTo({top:0,behavior:'smooth'}); });
+})();
+</script>
+</body>
+</html>
